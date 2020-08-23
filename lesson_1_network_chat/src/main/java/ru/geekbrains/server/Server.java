@@ -1,29 +1,37 @@
 package ru.geekbrains.server;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import ru.geekbrains.client.AuthException;
 import ru.geekbrains.client.TextMessage;
 import ru.geekbrains.server.auth.AuthService;
-import ru.geekbrains.server.auth.AuthServiceJdbcImpl;
-import ru.geekbrains.server.persistance.UserRepository;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
 import java.util.*;
 
 import static ru.geekbrains.client.MessagePatterns.AUTH_FAIL_RESPONSE;
 import static ru.geekbrains.client.MessagePatterns.AUTH_SUCCESS_RESPONSE;
 
+//@Component("server") //Добавляет данный класс в качестве bean
+@Service("server")
+//Добавляет данный класс в качестве bean, служит для отличия компонентов относящихся к разным архитектурным облостям/"слоям"
 public class Server {
+    //Аннатацию @Autowired, можно использовать над конструктором, параметром, или методом set(сеттер)
+    //Если у класса нет конструктор который будет орределять значение данного параметра,
+    //то в значение этого параметра будет записан объект созданный из bean в spring-контексте
+    /*@Autowired
+    private AuthService authService;*/
 
     private AuthService authService;
     private Map<String, ClientHandler> clientHandlerMap = Collections.synchronizedMap(new HashMap<>());
 
+    //Хороший тон, указывать данню аннотацию @Autowired
+    //над конструктором объекта который будет добавляться в spring-контекст
+    @Autowired
     public Server(AuthService authService) {
         this.authService = authService;
     }
