@@ -5,6 +5,7 @@ import ru.geekbrains.client.Network;
 import ru.geekbrains.client.TextMessage;
 import ru.geekbrains.client.history.ChatHistory;
 import ru.geekbrains.client.history.ChatHistoryTextFileImpl;
+import sun.nio.ch.Net;
 
 import javax.swing.*;
 import java.awt.*;
@@ -36,11 +37,12 @@ public class ChatMainWindow extends JFrame implements MessageReciever {
 
     private final DefaultListModel<String> userListModel;
 
-    private final Network network;
+    //private final Network network;
 
     private ChatHistory chatHistory;
 
-    public ChatMainWindow() {
+    public ChatMainWindow(Network network) {
+        //Network network = network;
         setTitle("Сетевой чат.");
         setBounds(200,200, 500, 500);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -96,8 +98,6 @@ public class ChatMainWindow extends JFrame implements MessageReciever {
 
         setVisible(true);
 
-        this.network = new Network("localhost", 7777, this);
-
         LoginDialog loginDialog = new LoginDialog(this, network);
         loginDialog.setVisible(true);
 
@@ -105,7 +105,7 @@ public class ChatMainWindow extends JFrame implements MessageReciever {
             System.exit(0);
         }
 
-        this.network.requestConnectedUserList();
+        network.requestConnectedUserList();
         try {
             this.chatHistory = new ChatHistoryTextFileImpl(network.getLogin());
         } catch (IOException e) {

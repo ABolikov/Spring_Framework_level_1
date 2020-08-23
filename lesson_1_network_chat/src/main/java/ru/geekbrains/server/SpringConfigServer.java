@@ -12,7 +12,7 @@ import java.sql.SQLException;
 
 @Configuration
 @ComponentScan("ru.geekbrains.server") //необходим для того? что бы подключить все используемый аннотациии spring в указанном пакете
-public class SpringConfig {
+public class SpringConfigServer {
 
     @Bean("dataSource")
     public DataSource dataSource() {
