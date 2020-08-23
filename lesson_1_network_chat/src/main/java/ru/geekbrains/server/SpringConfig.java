@@ -1,6 +1,7 @@
 package ru.geekbrains.server;
 
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import ru.geekbrains.server.auth.AuthServiceJdbcImpl;
@@ -10,6 +11,7 @@ import javax.sql.DataSource;
 import java.sql.SQLException;
 
 @Configuration
+@ComponentScan("ru.geekbrains.server") //необходим для того? что бы подключить все используемый аннотациии spring в указанном пакете
 public class SpringConfig {
 
     @Bean("dataSource")
@@ -22,6 +24,7 @@ public class SpringConfig {
         return ds;
     }
 
+    /*
     @Bean("userRepository")
     public UserRepository userRepository(DataSource dataSource) throws SQLException {
         return new UserRepository(dataSource);
@@ -35,5 +38,7 @@ public class SpringConfig {
     @Bean("server")
     public Server server(AuthServiceJdbcImpl authService) {
         return new Server(authService);
-    }
+    }*/
+
+
 }
