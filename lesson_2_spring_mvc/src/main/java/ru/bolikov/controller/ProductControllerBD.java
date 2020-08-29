@@ -8,16 +8,16 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import ru.bolikov.products.Product;
 import ru.bolikov.products.ProductRepository;
+import ru.bolikov.products.ProductRepositoryDB;
 
+import java.sql.SQLException;
 import java.util.List;
 
-//Класс контроллера для работы без БД
-
-//@Controller
-public class ProductController {
+@Controller
+public class ProductControllerBD {
 
     @Autowired
-    private ProductRepository productRepository;
+    private ProductRepositoryDB productRepositoryDB;
 
     private Product currentProduct = null;
 
@@ -27,8 +27,8 @@ public class ProductController {
     }
 
     @GetMapping("/index")
-    public String allProducts(Model model) {
-        List<Product> products = productRepository.getAllProduct();
+    public String allProducts(Model model) throws SQLException {
+        List<Product> products = productRepositoryDB.getAllProducts();
         model.addAttribute("products", products);
         return "index";
     }
@@ -46,45 +46,26 @@ public class ProductController {
     }
 
     @PostMapping("/add")
-    public String addProduct(Product product) {
+    public String addProduct(Product product) throws SQLException {
         if (currentProduct != null) {
-            List<Product> products = productRepository.getAllProduct();
-            for (Product pr : products) {
-                if (pr.equals(currentProduct)) {
-                    products.remove(pr);
-                    productRepository.addProduct(product);
+                    productRepositoryDB.update(product);
                     currentProduct = null;
-                    break;
-                }
-            }
         } else {
-            productRepository.addProduct(product);
+            productRepositoryDB.insert(product);
         }
         return "redirect:/index";
     }
 
     @GetMapping("/edit/{id}")
-    public String getProduct(@PathVariable("id") Integer id, Model model) {
-        List<Product> products = productRepository.getAllProduct();
-        for (Product product : products) {
-            if (product.getId().equals(id)) {
-                currentProduct = product;
-                break;
-            }
-        }
+    public String getProduct(@PathVariable("id") Integer id, Model model) throws SQLException {
+        currentProduct =  productRepositoryDB.findByProduct(id);
         model.addAttribute("product", currentProduct);
         return "product";
     }
 
     @GetMapping("/delete/{id}")
-    public String deleteProduct(@PathVariable("id") Integer id) {
-        List<Product> products = productRepository.getAllProduct();
-        for (int i = 0; i <= products.size(); i++) {
-            if (products.get(i).getId().equals(id)) {
-                products.remove(i);
-                break;
-            }
-        }
+    public String deleteProduct(@PathVariable("id") Integer id) throws SQLException {
+        productRepositoryDB.delete(id);
         return "redirect:/index";
     }
 }

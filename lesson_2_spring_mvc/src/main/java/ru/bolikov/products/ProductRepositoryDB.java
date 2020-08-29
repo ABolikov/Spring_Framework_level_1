@@ -1,0 +1,88 @@
+package ru.bolikov.products;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+
+import javax.sql.DataSource;
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+
+@Repository
+public class ProductRepositoryDB {
+
+    private final Connection conn;
+
+    @Autowired
+    public ProductRepositoryDB(DataSource dataSource) throws SQLException {
+        this(dataSource.getConnection());
+    }
+
+    public ProductRepositoryDB(Connection conn) throws SQLException {
+        this.conn = conn;
+        // createTableIfNotExists(conn);
+    }
+
+    public void insert(Product product) throws SQLException {
+        try (PreparedStatement stmt = conn.prepareStatement(
+                "insert into product(id_product, title, cost) values (?, ?, ?);")) {
+            stmt.setInt(1, product.getId());
+            stmt.setString(2, product.getTitle());
+            stmt.setInt(3, product.getCost());
+            stmt.execute();
+        }
+    }
+
+    public void update(Product product) throws SQLException {
+        try (PreparedStatement stmt = conn.prepareStatement(
+                "update product set title = ?, cost = ? where id_product = ?;")) {
+            stmt.setString(1, product.getTitle());
+            stmt.setInt(2, product.getCost());
+            stmt.setInt(3, product.getId());
+            stmt.execute();
+        }
+    }
+
+    public void delete(Integer id) throws SQLException {
+        try (PreparedStatement stmt = conn.prepareStatement(
+                "delete from product where id_product = ?;")) {
+            stmt.setInt(1, id);
+            stmt.execute();
+        }
+    }
+
+    public Product findByProduct(Integer id) throws SQLException {
+        try (PreparedStatement stmt = conn.prepareStatement(
+                "select * from product where id_product = ?;")) {
+            stmt.setInt(1, id);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return new Product(rs.getInt(1), rs.getString(2), rs.getInt(3));
+            }
+        }
+        return new Product(-1, "", 0);
+    }
+
+    public List<Product> getAllProducts() throws SQLException {
+        List<Product> res = new ArrayList<>();
+        try (Statement stmt = conn.createStatement()) {
+            ResultSet rs = stmt.executeQuery("select * from product");
+            while (rs.next()) {
+                res.add(new Product(rs.getInt(1), rs.getString(2), rs.getInt(3)));
+            }
+        }
+        return res;
+    }
+
+    /*private void createTableIfNotExists(Connection conn) throws SQLException {
+        try (Statement stmt = conn.createStatement()) {
+            stmt.execute("CREATE TABLE `product` (\n" +
+                    "  `id_product` int(11) NOT NULL AUTO_INCREMENT,\n" +
+                    "  `title` varchar(255) NOT NULL,\n" +
+                    "  `cost` int(11) unsigned NOT NULL,\n" +
+                    "  PRIMARY KEY (`id_product`)\n" +
+                    ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;");
+        }
+    }*/
+
+}
