@@ -7,19 +7,16 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import ru.bolikov.products.Product;
-import ru.bolikov.products.ProductRepository;
 import ru.bolikov.products.ProductRepositoryDB;
 
 import java.sql.SQLException;
 import java.util.List;
 
-@Controller
+//@Controller
 public class ProductControllerBD {
 
     @Autowired
     private ProductRepositoryDB productRepositoryDB;
-
-    private Product currentProduct = null;
 
     @GetMapping("/")
     public String redirectProduct() {
@@ -47,9 +44,8 @@ public class ProductControllerBD {
 
     @PostMapping("/add")
     public String addProduct(Product product) throws SQLException {
-        if (currentProduct != null) {
-                    productRepositoryDB.update(product);
-                    currentProduct = null;
+        if (product.getId() != null) {
+            productRepositoryDB.update(product);
         } else {
             productRepositoryDB.insert(product);
         }
@@ -58,8 +54,7 @@ public class ProductControllerBD {
 
     @GetMapping("/edit/{id}")
     public String getProduct(@PathVariable("id") Integer id, Model model) throws SQLException {
-        currentProduct =  productRepositoryDB.findByProduct(id);
-        model.addAttribute("product", currentProduct);
+        model.addAttribute("product", productRepositoryDB.findByProduct(id));
         return "product";
     }
 

@@ -13,13 +13,11 @@ import java.util.List;
 
 //Класс контроллера для работы без БД
 
-//@Controller
+@Controller
 public class ProductController {
 
     @Autowired
     private ProductRepository productRepository;
-
-    private Product currentProduct = null;
 
     @GetMapping("/")
     public String redirectProduct() {
@@ -47,16 +45,11 @@ public class ProductController {
 
     @PostMapping("/add")
     public String addProduct(Product product) {
-        if (currentProduct != null) {
-            List<Product> products = productRepository.getAllProduct();
-            for (Product pr : products) {
-                if (pr.equals(currentProduct)) {
-                    products.remove(pr);
-                    productRepository.addProduct(product);
-                    currentProduct = null;
-                    break;
-                }
-            }
+        List<Product> products = productRepository.getAllProduct();
+        if (product.getId() != null) {
+            Product currentProduct = products.get(product.getId() - 1);
+            currentProduct.setCost(product.getCost());
+            currentProduct.setTitle(product.getTitle());
         } else {
             productRepository.addProduct(product);
         }
@@ -66,25 +59,14 @@ public class ProductController {
     @GetMapping("/edit/{id}")
     public String getProduct(@PathVariable("id") Integer id, Model model) {
         List<Product> products = productRepository.getAllProduct();
-        for (Product product : products) {
-            if (product.getId().equals(id)) {
-                currentProduct = product;
-                break;
-            }
-        }
-        model.addAttribute("product", currentProduct);
+        model.addAttribute("product", products.get(id - 1));
         return "product";
     }
 
     @GetMapping("/delete/{id}")
     public String deleteProduct(@PathVariable("id") Integer id) {
         List<Product> products = productRepository.getAllProduct();
-        for (int i = 0; i <= products.size(); i++) {
-            if (products.get(i).getId().equals(id)) {
-                products.remove(i);
-                break;
-            }
-        }
+        products.remove(id - 1);
         return "redirect:/index";
     }
 }

@@ -45,15 +45,13 @@ public class Product {
 
         Product product = (Product) o;
 
-        if (!id.equals(product.id)) return false;
         if (!title.equals(product.title)) return false;
         return cost.equals(product.cost);
     }
 
     @Override
     public int hashCode() {
-        int result = id.hashCode();
-        result = 31 * result + title.hashCode();
+        int result = title.hashCode();
         result = 31 * result + cost.hashCode();
         return result;
     }

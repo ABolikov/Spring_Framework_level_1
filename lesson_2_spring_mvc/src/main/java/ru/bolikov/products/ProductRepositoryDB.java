@@ -15,20 +15,14 @@ public class ProductRepositoryDB {
 
     @Autowired
     public ProductRepositoryDB(DataSource dataSource) throws SQLException {
-        this(dataSource.getConnection());
-    }
-
-    public ProductRepositoryDB(Connection conn) throws SQLException {
-        this.conn = conn;
-        // createTableIfNotExists(conn);
+        this.conn = dataSource.getConnection();
     }
 
     public void insert(Product product) throws SQLException {
         try (PreparedStatement stmt = conn.prepareStatement(
-                "insert into product(id_product, title, cost) values (?, ?, ?);")) {
-            stmt.setInt(1, product.getId());
-            stmt.setString(2, product.getTitle());
-            stmt.setInt(3, product.getCost());
+                "insert into product(title, cost) values (?, ?);")) {
+            stmt.setString(1, product.getTitle());
+            stmt.setInt(2, product.getCost());
             stmt.execute();
         }
     }
@@ -74,6 +68,8 @@ public class ProductRepositoryDB {
         return res;
     }
 
+
+    //Для создания таблицы, если она удалена:
     /*private void createTableIfNotExists(Connection conn) throws SQLException {
         try (Statement stmt = conn.createStatement()) {
             stmt.execute("CREATE TABLE `product` (\n" +

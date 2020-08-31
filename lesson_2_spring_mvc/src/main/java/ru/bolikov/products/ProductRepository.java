@@ -16,6 +16,12 @@ public class ProductRepository {
 
     public void addProduct(Product product) {
         products.add(product);
+        product.setId(products.size());
+    }
+
+    public void removeProduct(int index, Product product) {
+        products.add(index, product);
+        product.setId(products.size());
     }
 
 }
