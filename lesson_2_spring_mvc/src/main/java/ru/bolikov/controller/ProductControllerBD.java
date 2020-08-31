@@ -12,7 +12,7 @@ import ru.bolikov.products.ProductRepositoryDB;
 import java.sql.SQLException;
 import java.util.List;
 
-//@Controller
+@Controller
 public class ProductControllerBD {
 
     @Autowired

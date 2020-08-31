@@ -13,7 +13,7 @@ import java.util.List;
 
 //Класс контроллера для работы без БД
 
-@Controller
+//@Controller
 public class ProductController {
 
     @Autowired
