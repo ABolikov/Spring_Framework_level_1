@@ -3,17 +3,17 @@ package ru.bolikov.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import ru.bolikov.products.Product;
 import ru.bolikov.products.ProductRepository;
 
-import java.util.List;
+import java.util.Map;
 
 //Класс контроллера для работы без БД
-
-//@Controller
+@Controller
 public class ProductController {
 
     @Autowired
@@ -26,7 +26,7 @@ public class ProductController {
 
     @GetMapping("/index")
     public String allProducts(Model model) {
-        List<Product> products = productRepository.getAllProduct();
+        Map<Integer, Product> products = productRepository.getAllProduct();
         model.addAttribute("products", products);
         return "index";
     }
@@ -43,30 +43,27 @@ public class ProductController {
         return "product";
     }
 
-    @PostMapping("/add")
+    @PostMapping("/product/add")
     public String addProduct(Product product) {
-        List<Product> products = productRepository.getAllProduct();
         if (product.getId() != null) {
-            Product currentProduct = products.get(product.getId() - 1);
-            currentProduct.setCost(product.getCost());
-            currentProduct.setTitle(product.getTitle());
+            productRepository.editProduct(product.getId(), product);
         } else {
             productRepository.addProduct(product);
         }
         return "redirect:/index";
     }
 
-    @GetMapping("/edit/{id}")
+    @GetMapping("/product/{id}/edit")
     public String getProduct(@PathVariable("id") Integer id, Model model) {
-        List<Product> products = productRepository.getAllProduct();
-        model.addAttribute("product", products.get(id - 1));
+        Map<Integer, Product> products = productRepository.getAllProduct();
+        model.addAttribute("product", products.get(id));
         return "product";
     }
 
-    @GetMapping("/delete/{id}")
+    @DeleteMapping("/product/{id}/delete")
     public String deleteProduct(@PathVariable("id") Integer id) {
-        List<Product> products = productRepository.getAllProduct();
-        products.remove(id - 1);
+        Map<Integer, Product> products = productRepository.getAllProduct();
+        products.remove(id);
         return "redirect:/index";
     }
 }

@@ -50,12 +50,15 @@
                 </thead>
                 <tbody>
                 <tr th:each="product : ${products}">
-                    <td th:text="${product.id}"></td>
-                    <td th:text="${product.title}"></td>
-                    <td th:text="${product.cost}"></td>
+                    <td th:text="${product.key}"></td>
+                    <td th:text="${product.value.title}"></td>
+                    <td th:text="${product.value.cost}"></td>
                     <td>
-                        <a class="btn btn-success" th:href="@{/edit/{id}(id=${product.id})}"><i class="fas fa-edit"></i></a>
-                        <a class="btn btn-danger" th:href="@{/delete/{id}(id=${product.id})}"><i class="far fa-trash-alt"></i></a>
+                        <a class="btn btn-success" th:href="@{product/{id}/edit(id=${product.key})}"><i class="fas fa-edit"></i></a>
+                        <form th:action="@{product/{id}/delete(id=${product.key})}" th:method="delete">
+                            <button type="submit" class="btn btn-danger"><i class="far fa-trash-alt"></i></button>
+                        </form>
+
                     </td>
                 </tr>
                 </tbody>

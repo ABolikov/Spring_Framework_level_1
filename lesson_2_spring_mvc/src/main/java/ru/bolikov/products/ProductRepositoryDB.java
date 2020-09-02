@@ -8,7 +8,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-@Repository
+//@Repository
 public class ProductRepositoryDB {
 
     private final Connection conn;
@@ -67,18 +67,4 @@ public class ProductRepositoryDB {
         }
         return res;
     }
-
-
-    //Для создания таблицы, если она удалена:
-    /*private void createTableIfNotExists(Connection conn) throws SQLException {
-        try (Statement stmt = conn.createStatement()) {
-            stmt.execute("CREATE TABLE `product` (\n" +
-                    "  `id_product` int(11) NOT NULL AUTO_INCREMENT,\n" +
-                    "  `title` varchar(255) NOT NULL,\n" +
-                    "  `cost` int(11) unsigned NOT NULL,\n" +
-                    "  PRIMARY KEY (`id_product`)\n" +
-                    ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;");
-        }
-    }*/
-
 }

@@ -3,6 +3,7 @@ package ru.bolikov.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -12,7 +13,7 @@ import ru.bolikov.products.ProductRepositoryDB;
 import java.sql.SQLException;
 import java.util.List;
 
-@Controller
+//@Controller
 public class ProductControllerBD {
 
     @Autowired
@@ -42,7 +43,7 @@ public class ProductControllerBD {
         return "product";
     }
 
-    @PostMapping("/add")
+    @PostMapping("/product/add")
     public String addProduct(Product product) throws SQLException {
         if (product.getId() != null) {
             productRepositoryDB.update(product);
@@ -52,13 +53,13 @@ public class ProductControllerBD {
         return "redirect:/index";
     }
 
-    @GetMapping("/edit/{id}")
+    @GetMapping("/product/{id}/edit")
     public String getProduct(@PathVariable("id") Integer id, Model model) throws SQLException {
         model.addAttribute("product", productRepositoryDB.findByProduct(id));
         return "product";
     }
 
-    @GetMapping("/delete/{id}")
+    @DeleteMapping("/product/{id}/delete")
     public String deleteProduct(@PathVariable("id") Integer id) throws SQLException {
         productRepositoryDB.delete(id);
         return "redirect:/index";

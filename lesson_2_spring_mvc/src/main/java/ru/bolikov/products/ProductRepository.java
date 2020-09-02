@@ -3,25 +3,29 @@ package ru.bolikov.products;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Repository
 public class ProductRepository {
+    private Integer idProduct = 0;
 
-    private List<Product> products = new ArrayList<>();
+    private Map<Integer,Product> products = new HashMap<>();
 
-    public List<Product> getAllProduct() {
+    public Map<Integer, Product> getAllProduct() {
         return products;
     }
 
     public void addProduct(Product product) {
-        products.add(product);
-        product.setId(products.size());
+        idProduct++;
+        products.put(idProduct, product);
+        product.setId(idProduct);
     }
 
-    public void removeProduct(int index, Product product) {
-        products.add(index, product);
-        product.setId(products.size());
+    public void editProduct(int index, Product product) {
+        products.put(index, product);
+        product.setId(index);
     }
 
 }
