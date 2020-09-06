@@ -51,7 +51,10 @@ public class Product {
         this.cost = cost;
     }
 
-    @ManyToMany(cascade = CascadeType.REMOVE)
+    @ManyToMany(
+            cascade = CascadeType.REMOVE,
+            fetch=FetchType.EAGER
+    )
     @JoinTable(
             name = "market",
             joinColumns = @JoinColumn(name = "product_id"),

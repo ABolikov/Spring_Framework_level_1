@@ -39,7 +39,10 @@ public class Customer {
         this.name = name;
     }
 
-    @ManyToMany(cascade = CascadeType.REMOVE)
+    @ManyToMany(
+            cascade = CascadeType.REMOVE,
+            fetch=FetchType.EAGER
+    )
     @JoinTable(
             name = "market",
             joinColumns = @JoinColumn(name = "customer_id"),
