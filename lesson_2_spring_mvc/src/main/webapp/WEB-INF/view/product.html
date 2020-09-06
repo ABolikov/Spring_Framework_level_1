@@ -35,34 +35,18 @@
 <div class="container">
     <div class="row py-2">
         <div class="col-12">
-            <a class="btn btn-primary" th:href="@{/add}">Add Product</a>
-        </div>
-
-        <div class="col-12">
-            <table class="table table-bordered my-2">
-                <thead>
-                <tr>
-                    <th scope="col">Id</th>
-                    <th scope="col">Title</th>
-                    <th scope="col">Cost</th>
-                    <th scope="col">Actions</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:each="product : ${products}">
-                    <td th:text="${product.key}"></td>
-                    <td th:text="${product.value.title}"></td>
-                    <td th:text="${product.value.cost}"></td>
-                    <td>
-                        <a class="btn btn-success" th:href="@{product/{id}/edit(id=${product.key})}"><i class="fas fa-edit"></i></a>
-                        <form th:action="@{product/{id}/delete(id=${product.key})}" th:method="delete">
-                            <button type="submit" class="btn btn-danger"><i class="far fa-trash-alt"></i></button>
-                        </form>
-
-                    </td>
-                </tr>
-                </tbody>
-            </table>
+            <form action="#" th:action="@{/product/add}" th:object="${product}" method="post">
+                    <input type="hidden" class="form-control" th:field="*{id}">
+                <div class="form-group">
+                    <label>Title</label>
+                    <input type="text" class="form-control" th:field="*{title}" placeholder="Enter title">
+                </div>
+                <div class="form-group">
+                    <label>Cost</label>
+                    <input type="number" class="form-control" th:field="*{cost}" placeholder="Enter cost">
+                </div>
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
         </div>
     </div>
 </div>
@@ -78,5 +62,5 @@
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
         integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
         crossorigin="anonymous"></script>
+
 </body>
-</html>
