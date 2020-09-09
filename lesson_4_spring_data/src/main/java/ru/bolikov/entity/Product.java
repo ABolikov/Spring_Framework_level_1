@@ -1,8 +1,19 @@
-package ru.bolikov.products;
+package ru.bolikov.entity;
 
+import javax.persistence.*;
+
+@Entity
+@Table(name = "product")
 public class Product {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+
+    @Column(name = "title")
     private String title;
+
+    @Column(name = "cost")
     private Integer cost;
 
     public Product() {

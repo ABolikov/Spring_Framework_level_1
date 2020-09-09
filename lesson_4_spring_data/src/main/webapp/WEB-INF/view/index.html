@@ -39,6 +39,14 @@
         </div>
 
         <div class="col-12">
+            <form>
+                <label>Title</label>
+                <input type="text" name="title" id="title" th:value="${param.title}"/>
+                <button type="submit" class="btn btn-primary">Filter</button>
+            </form>
+        </div>
+
+        <div class="col-12">
             <table class="table table-bordered my-2">
                 <thead>
                 <tr>
@@ -54,11 +62,11 @@
                     <td th:text="${product.title}"></td>
                     <td th:text="${product.cost}"></td>
                     <td>
-                        <a class="btn btn-success" th:href="@{product/{id}/edit(id=${product.id})}"><i class="fas fa-edit"></i></a>
                         <form th:action="@{product/{id}/delete(id=${product.id})}" th:method="delete">
+                            <a class="btn btn-success" th:href="@{product/{id}/edit(id=${product.id})}"><i
+                                    class="fas fa-edit"></i></a>
                             <button type="submit" class="btn btn-danger"><i class="far fa-trash-alt"></i></button>
                         </form>
-
                     </td>
                 </tr>
                 </tbody>
