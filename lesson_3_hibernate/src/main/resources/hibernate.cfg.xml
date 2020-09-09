@@ -21,6 +21,6 @@
 
         <mapping class="org.bolikov.Customer"/>
         <mapping class="org.bolikov.Product"/>
-        <mapping class="org.bolikov.Market"/>
+        <mapping class="org.bolikov.OrderItem"/>
     </session-factory>
 </hibernate-configuration>

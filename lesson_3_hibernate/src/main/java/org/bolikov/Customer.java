@@ -15,6 +15,12 @@ public class Customer {
     @Column(name = "name")
     private String name;
 
+    @OneToMany(mappedBy = "customer",
+            cascade = CascadeType.ALL,
+            fetch=FetchType.EAGER
+    )
+    public List<OrderItem> orderItems;
+
     public Customer() {
     }
 
@@ -31,6 +37,10 @@ public class Customer {
         return name;
     }
 
+    public List<OrderItem> getOrderItems() {
+        return orderItems;
+    }
+
     public void setCustomerId(Long id) {
         this.customerId = id;
     }
@@ -39,16 +49,9 @@ public class Customer {
         this.name = name;
     }
 
-    @ManyToMany(
-            cascade = CascadeType.REMOVE,
-            fetch=FetchType.EAGER
-    )
-    @JoinTable(
-            name = "market",
-            joinColumns = @JoinColumn(name = "customer_id"),
-            inverseJoinColumns = @JoinColumn(name = "product_id")
-    )
-    public List<Product> products;
+    public void setOrderItems(List<OrderItem> orderItems) {
+        this.orderItems = orderItems;
+    }
 
     @Override
     public String toString() {

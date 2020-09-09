@@ -3,6 +3,7 @@ package org.bolikov.controller;
 import org.bolikov.Customer;
 import org.bolikov.Product;
 
+import java.math.BigDecimal;
 import java.util.Scanner;
 
 public class ConsoleController {
@@ -17,6 +18,7 @@ public class ConsoleController {
     private boolean delC = false;
     private boolean customer = false;
     private boolean product = false;
+    private boolean setCost = false;
 
     public ConsoleController(HibernateController controller) {
         this.controller = controller;
@@ -28,6 +30,7 @@ public class ConsoleController {
         System.out.println("addC - добавление покупателя");
         System.out.println("delC - удаление покупателя");
         System.out.println("addP - добавление продукта");
+        System.out.println("setCost - изменение цены продукта");
         System.out.println("delP - удаление продукта");
         System.out.println("market - добавление товара который купил покупатель");
         System.out.println("customer - вывести, что купил указанны покупатель");
@@ -60,6 +63,13 @@ public class ConsoleController {
                                 "\nДробная часть стоимости указывается через точку");
                         isCommand = false;
                         addP = true;
+                        break;
+                    }
+                    case "setcost": {
+                        System.out.println("Введите наименование товара и его новую цену, через запятую." +
+                                "\nДробная часть стоимости указывается через точку");
+                        isCommand = false;
+                        setCost = true;
                         break;
                     }
                     case "delp": {
@@ -119,7 +129,7 @@ public class ConsoleController {
                     System.out.println("Допущена ошибка при вводе значения, повторите попытку:");
                     error = true;
                 } else {
-                    controller.addProduct(value[0], Double.valueOf(value[1]));
+                    controller.addProduct(value[0], BigDecimal.valueOf(Double.parseDouble(value[1])));
                 }
             }
             if (delC) controller.deleteCustomer(value[0]);
@@ -133,12 +143,15 @@ public class ConsoleController {
                 }
             }
             if (customer) {
-                Customer object = controller.selectCustomer(value[0]);
-                if (object != null) System.out.println(object.products);
+                Customer object = controller.selectCustomer(value[0], true);
+                if (object != null) System.out.println(object.getOrderItems());
             }
             if (product) {
-                Product object = controller.selectProduct(value[0]);
-                if (object != null) System.out.println(object.customers);
+                Product object = controller.selectProduct(value[0], true);
+                if (object != null) System.out.println(object.getOrderItems());
+            }
+            if (setCost) {
+                controller.setCostProduct(value[0], BigDecimal.valueOf(Double.parseDouble(value[1])));
             }
             if (!error) {
                 System.out.println("Введите команду (регистр не важен):");
@@ -156,5 +169,6 @@ public class ConsoleController {
         delC = false;
         customer = false;
         product = false;
+        setCost = false;
     }
 }

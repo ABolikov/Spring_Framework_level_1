@@ -1,26 +1,28 @@
 package org.bolikov.controller;
 
 import org.bolikov.Customer;
-import org.bolikov.Market;
+import org.bolikov.OrderItem;
 import org.bolikov.Product;
 import org.hibernate.cfg.Configuration;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import java.math.BigDecimal;
 
 public class HibernateController {
 
     private EntityManagerFactory emFactory;
+    private EntityManager em;
 
     public HibernateController() {
         this.emFactory = new Configuration().configure("hibernate.cfg.xml").buildSessionFactory();
     }
 
-    public Customer selectCustomer(String name) {
-        EntityManager em = emFactory.createEntityManager();
+    public Customer selectCustomer(String name, boolean isClose) {
+        em = emFactory.createEntityManager();
         Customer customer;
         try {
-           customer = em.createQuery("from Customer where name = :name", Customer.class)
+            customer = em.createQuery("from Customer where name = :name", Customer.class)
                     .setParameter("name", name)
                     .getSingleResult();
         } catch (Exception ex) {
@@ -28,13 +30,15 @@ public class HibernateController {
             System.out.println("Не найден переданный покупатель");
             customer = null;
         } finally {
-            em.close();
+            if (isClose) {
+                em.close();
+            }
         }
         return customer;
     }
 
-    public Product selectProduct(String productName) {
-        EntityManager em = emFactory.createEntityManager();
+    public Product selectProduct(String productName, boolean isClose) {
+        em = emFactory.createEntityManager();
         Product product;
         try {
             product = em.createQuery("from Product where productName = :productName", Product.class)
@@ -45,7 +49,9 @@ public class HibernateController {
             System.out.println("Не найден переданный товар");
             product = null;
         } finally {
-            em.close();
+            if (isClose) {
+                em.close();
+            }
         }
         return product;
     }
@@ -67,7 +73,7 @@ public class HibernateController {
         em.close();
     }
 
-    public void addProduct(String nameProduct, Double cost) {
+    public void addProduct(String nameProduct, BigDecimal cost) {
         EntityManager em = emFactory.createEntityManager();
         em.getTransaction().begin();
         em.persist(new Product(null, nameProduct, cost));
@@ -85,14 +91,23 @@ public class HibernateController {
     }
 
     public void addMarket(String nameCustomer, String nameProduct) {
-        Customer customer = selectCustomer(nameCustomer);
-        Product product = selectProduct(nameProduct);
+        Customer customer = selectCustomer(nameCustomer, false);
+        Product product = selectProduct(nameProduct, false);
         if (product != null & customer != null) {
-            EntityManager em = emFactory.createEntityManager();
             em.getTransaction().begin();
-            em.persist(new Market(null, customer.getCustomerId(), product.getProductId()));
+            em.persist(new OrderItem(null, customer, product, product.getCost()));
             em.getTransaction().commit();
-            em.close();
         }
+        em.close();
+    }
+
+    public void setCostProduct(String nameProduct, BigDecimal cost) {
+        Product product = selectProduct(nameProduct, false);
+        if (product != null) {
+            em.getTransaction().begin();
+            product.setCost(cost);
+            em.getTransaction().commit();
+        }
+        em.close();
     }
 }
