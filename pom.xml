@@ -12,6 +12,8 @@
     <modules>
         <module>lesson_1_network_chat</module>
         <module>lesson_2_spring_mvc</module>
+        <module>lesson_3_hibernate</module>
+        <module>lesson_4_spring_data</module>
     </modules>
 
     <properties>
