@@ -83,6 +83,11 @@
                 </tbody>
             </table>
         </div>
+        <div th:if="${products.totalPages > 0}" th:each="pageNumber : ${pageNumbers}">
+            <a class="btn btn-primary py-2"
+               th:href="@{/index(page=${pageNumber},title=${param.title},cost_min=${param.cost_min},cost_max=${param.cost_max})}"
+               th:text=${pageNumber}></a>
+        </div>
     </div>
 </div>
 
