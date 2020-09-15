@@ -68,14 +68,16 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr th:each="product : ${products}">
+                <tr th:each="product : ${products.content}">
                     <td th:text="${product.id}"></td>
                     <td th:text="${product.title}"></td>
                     <td th:text="${product.cost}"></td>
                     <td>
                         <form th:action="@{product/{id}/delete(id=${product.id})}" th:method="delete">
-                            <a class="btn btn-success" th:href="@{product/{id}/edit(id=${product.id})}"><i
-                                    class="fas fa-edit"></i></a>
+                            <a class="btn btn-success"
+                               th:href="@{product/{id}/edit(id=${product.id})}">
+                                <i class="fas fa-edit"></i>
+                            </a>
                             <button type="submit" class="btn btn-danger"><i class="far fa-trash-alt"></i></button>
                         </form>
                     </td>
@@ -83,11 +85,30 @@
                 </tbody>
             </table>
         </div>
-        <div th:if="${products.totalPages > 0}" th:each="pageNumber : ${pageNumbers}">
-            <a class="btn btn-primary py-2"
-               th:href="@{/index(page=${pageNumber},title=${param.title},cost_min=${param.cost_min},cost_max=${param.cost_max})}"
-               th:text=${pageNumber}></a>
-        </div>
+        <nav aria-label="..." class="col-12">
+            <ul class="pagination">
+                <li class="page-item" th:classappend="${products.number == 0} ? 'disabled'">
+                    <a class="page-link"
+                       th:href="@{/index(page=${products.number},title=${param.title},cost_min=${param.cost_min},cost_max=${param.cost_max})}">
+                        Previous
+                    </a>
+                </li>
+                <li class="page-item"
+                    th:each="pageNumber : ${#numbers.sequence(1, products.totalPages)}"
+                    th:classappend="${pageNumber == products.number + 1} ? 'active'">
+                    <a class="page-link"
+                       th:href="@{/index(page=${pageNumber},title=${param.title},cost_min=${param.cost_min},cost_max=${param.cost_max})}"
+                       th:text=${pageNumber}>
+                    </a>
+                </li>
+                <li class="page-item" th:classappend="${products.number + 1 == products.totalPages} ? 'disabled'">
+                    <a class="page-link"
+                       th:href="@{/index(page=${products.number + 2},title=${param.title},cost_min=${param.cost_min},cost_max=${param.cost_max})}">
+                        Next
+                    </a>
+                </li>
+            </ul>
+        </nav>
     </div>
 </div>
 

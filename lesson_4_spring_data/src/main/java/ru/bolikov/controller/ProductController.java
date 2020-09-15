@@ -11,10 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.bolikov.entity.Product;
 import ru.bolikov.repositories.ProductRepository;
 
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 @Controller
 public class ProductController {
@@ -32,7 +29,7 @@ public class ProductController {
 
     @GetMapping("/index")
     public String allProducts(Model model,
-                              @RequestParam(value = "page", required = false) Optional<Integer> page,
+                              @RequestParam(value = "page") Optional<Integer> page,
                               @RequestParam(value = "title", required = false) String name,
                               @RequestParam(value = "cost_min", required = false) Integer cost_min,
                               @RequestParam(value = "cost_max", required = false) Integer cost_max) {
@@ -43,37 +40,29 @@ public class ProductController {
             products =  productRepository.findAll(pageRequest);
         } else {
             if (name != null & cost_min == null & cost_max == null) {
-                products = productRepository.findByTitleLike("%" + name + "%", pageRequest);
+                products = productRepository.findByTitleLikeOrderByIdAsc("%" + name + "%", pageRequest);
                 logger.info("Filter like %" + name + "%");
             } else if (name != null & cost_min != null & cost_max == null) {
-                products = productRepository.findByTitleLikeAndCostGreaterThanEqual("%" + name + "%", cost_min, pageRequest);
+                products = productRepository.findByTitleLikeAndCostGreaterThanEqualOrderByIdAsc("%" + name + "%", cost_min, pageRequest);
                 logger.info("Filter like %" + name + "% and >= " + cost_min);
             } else if (name != null & cost_min == null & cost_max != null) {
-                products = productRepository.findByTitleLikeAndCostLessThanEqual("%" + name + "%", cost_max, pageRequest);
+                products = productRepository.findByTitleLikeAndCostLessThanEqualOrderByIdAsc("%" + name + "%", cost_max, pageRequest);
                 logger.info("Filter like %" + name + "% and <= " + cost_max);
             } else if (name != null & cost_min != null & cost_max != null) {
-                products = productRepository.findByTitleLikeAndCostGreaterThanEqualAndCostLessThanEqual("%" + name + "%", cost_min, cost_max, pageRequest);
+                products = productRepository.findByTitleLikeAndCostGreaterThanEqualAndCostLessThanEqualOrderByIdAsc("%" + name + "%", cost_min, cost_max, pageRequest);
                 logger.info("Filter like %" + name + "% and >= " + cost_min + " and <= " + cost_max);
             } else if (cost_min != null & cost_max == null) {
-                products = productRepository.findByCostGreaterThanEqual(cost_min, pageRequest);
+                products = productRepository.findByCostGreaterThanEqualOrderByIdAsc(cost_min, pageRequest);
                 logger.info("Filter >= " + cost_min);
             } else if (cost_min == null) {
-                products = productRepository.findByCostLessThanEqual(cost_max, pageRequest);
+                products = productRepository.findByCostLessThanEqualOrderByIdAsc(cost_max, pageRequest);
                 logger.info("Filter <= " + cost_max);
             } else {
-                products = productRepository.findByCostGreaterThanEqualAndCostLessThanEqual(cost_min, cost_max, pageRequest);
+                products = productRepository.findByCostGreaterThanEqualAndCostLessThanEqualOrderByIdAsc(cost_min, cost_max, pageRequest);
                 logger.info("Filter >= " + cost_min + " and <= " + cost_max);
             }
         }
         model.addAttribute("products", products);
-        // Создание листа страниц и передача на форму
-        int totalPages = products.getTotalPages();
-        if (totalPages > 0) {
-            List<Integer> pageNumbers = IntStream.rangeClosed(1, totalPages)
-                    .boxed()
-                    .collect(Collectors.toList());
-            model.addAttribute("pageNumbers", pageNumbers);
-        }
         return "index";
     }
 
