@@ -1,25 +1,21 @@
 package ru.bolikov.controller;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import ru.bolikov.entity.Product;
 import ru.bolikov.repositories.ProductRepository;
+import ru.bolikov.specification.ProductSpecification;
 
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 @Controller
 public class ProductController {
-
-    private final static Logger logger = LoggerFactory.getLogger(ProductController.class);
+    private static String sort = "asc";
+    private static String parameter_sort = "id";
     private final static Integer itemCount = 5;
 
     @Autowired
@@ -32,48 +28,43 @@ public class ProductController {
 
     @GetMapping("/index")
     public String allProducts(Model model,
-                              @RequestParam(value = "page", required = false) Optional<Integer> page,
-                              @RequestParam(value = "title", required = false) String name,
+                              @RequestParam(value = "page") Optional<Integer> page,
+                              @RequestParam(value = "title", required = false) String title,
                               @RequestParam(value = "cost_min", required = false) Integer cost_min,
-                              @RequestParam(value = "cost_max", required = false) Integer cost_max) {
-        Page<Product> products;
+                              @RequestParam(value = "cost_max", required = false) Integer cost_max,
+                              @RequestParam(value = "sort_id", required = false) String sort_id,
+                              @RequestParam(value = "sort_title", required = false) String sort_title,
+                              @RequestParam(value = "sort_cost", required = false) String sort_cost) {
         int currentPage = page.orElse(1);
-        PageRequest pageRequest = PageRequest.of(currentPage -1, itemCount);
-        if ((name == null || name.isEmpty()) & cost_min == null & cost_max == null) {
-            products =  productRepository.findAll(pageRequest);
-        } else {
-            if (name != null & cost_min == null & cost_max == null) {
-                products = productRepository.findByTitleLike("%" + name + "%", pageRequest);
-                logger.info("Filter like %" + name + "%");
-            } else if (name != null & cost_min != null & cost_max == null) {
-                products = productRepository.findByTitleLikeAndCostGreaterThanEqual("%" + name + "%", cost_min, pageRequest);
-                logger.info("Filter like %" + name + "% and >= " + cost_min);
-            } else if (name != null & cost_min == null & cost_max != null) {
-                products = productRepository.findByTitleLikeAndCostLessThanEqual("%" + name + "%", cost_max, pageRequest);
-                logger.info("Filter like %" + name + "% and <= " + cost_max);
-            } else if (name != null & cost_min != null & cost_max != null) {
-                products = productRepository.findByTitleLikeAndCostGreaterThanEqualAndCostLessThanEqual("%" + name + "%", cost_min, cost_max, pageRequest);
-                logger.info("Filter like %" + name + "% and >= " + cost_min + " and <= " + cost_max);
-            } else if (cost_min != null & cost_max == null) {
-                products = productRepository.findByCostGreaterThanEqual(cost_min, pageRequest);
-                logger.info("Filter >= " + cost_min);
-            } else if (cost_min == null) {
-                products = productRepository.findByCostLessThanEqual(cost_max, pageRequest);
-                logger.info("Filter <= " + cost_max);
-            } else {
-                products = productRepository.findByCostGreaterThanEqualAndCostLessThanEqual(cost_min, cost_max, pageRequest);
-                logger.info("Filter >= " + cost_min + " and <= " + cost_max);
-            }
+        PageRequest pageRequest = PageRequest.of(currentPage - 1, itemCount);
+        Specification<Product> specification = ProductSpecification.trueLiteral();
+
+        if (sort_id != null && !sort_id.isEmpty()) {
+            sort = sort_id;
+            parameter_sort = "id";
+        } else if (sort_title != null && !sort_title.isEmpty()) {
+            sort = sort_title;
+            parameter_sort = "title";
+        } else if (sort_cost != null && !sort_cost.isEmpty()) {
+            sort = sort_cost;
+            parameter_sort = "cost";
         }
-        model.addAttribute("products", products);
-        // Создание листа страниц и передача на форму
-        int totalPages = products.getTotalPages();
-        if (totalPages > 0) {
-            List<Integer> pageNumbers = IntStream.rangeClosed(1, totalPages)
-                    .boxed()
-                    .collect(Collectors.toList());
-            model.addAttribute("pageNumbers", pageNumbers);
+
+        specification = specification.and(ProductSpecification.productOrderBy(sort, parameter_sort));
+
+        if (title != null && !title.isEmpty()) {
+            specification = specification.and(ProductSpecification.productTitleLike(title));
         }
+        if (cost_min != null) {
+            specification = specification.and(ProductSpecification.productCostGreaterThanOrEqualTo(cost_min));
+        }
+        if (cost_max != null) {
+            specification = specification.and(ProductSpecification.productCostLessThanOrEqualTo(cost_max));
+        }
+
+        model.addAttribute("products", productRepository.findAll(specification, pageRequest));
+        model.addAttribute("sort", sort);
+        model.addAttribute("parameter_sort", "sort_" + parameter_sort);
         return "index";
     }
 

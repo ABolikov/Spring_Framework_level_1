@@ -6,6 +6,9 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
+    <!-- Icon-->
+    <script src="https://kit.fontawesome.com/0340798433.js" crossorigin="anonymous"></script>
+
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
           integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
@@ -61,21 +64,53 @@
             <table class="table table-bordered my-2">
                 <thead>
                 <tr>
-                    <th scope="col">Id</th>
-                    <th scope="col">Title</th>
-                    <th scope="col">Cost</th>
+                    <th scope="col">
+                        <a th:href="@{/index(page=${products.number + 1},
+                        title=${param.title},
+                        cost_min=${param.cost_min},
+                        cost_max=${param.cost_max},
+                        sort_id=${sort == 'desc'} ? 'asc' : 'desc')}">
+                            Id
+                            <i class="fas" th:if="${parameter_sort} == 'sort_id'"
+                               th:classappend="${sort == 'desc'} ? 'fa-angle-up' : 'fa-angle-down'"></i>
+                        </a>
+                    </th>
+                    <th scope="col">
+                        <a th:href="@{/index(page=${products.number + 1},
+                        title=${param.title},
+                        cost_min=${param.cost_min},
+                        cost_max=${param.cost_max},
+                        sort_title=${sort == 'desc'} ? 'asc' : 'desc')}">
+                            Title
+                            <i class="fas" th:if="${parameter_sort} == 'sort_title'"
+                               th:classappend="${sort == 'desc'} ? 'fa-angle-up' : 'fa-angle-down'"></i>
+                        </a>
+                    </th>
+                    <th scope="col">
+                        <a th:href="@{/index(page=${products.number + 1},
+                        title=${param.title},
+                        cost_min=${param.cost_min},
+                        cost_max=${param.cost_max},
+                        sort_cost=${sort == 'desc'} ? 'asc' : 'desc')}">
+                            Cost
+                            <i class="fas" th:if="${parameter_sort} == 'sort_cost'"
+                               th:classappend="${sort == 'desc'} ? 'fa-angle-up' : 'fa-angle-down'"></i>
+                        </a>
+                    </th>
                     <th scope="col">Actions</th>
                 </tr>
                 </thead>
                 <tbody>
-                <tr th:each="product : ${products}">
+                <tr th:each="product : ${products.content}">
                     <td th:text="${product.id}"></td>
                     <td th:text="${product.title}"></td>
                     <td th:text="${product.cost}"></td>
                     <td>
                         <form th:action="@{product/{id}/delete(id=${product.id})}" th:method="delete">
-                            <a class="btn btn-success" th:href="@{product/{id}/edit(id=${product.id})}"><i
-                                    class="fas fa-edit"></i></a>
+                            <a class="btn btn-success"
+                               th:href="@{product/{id}/edit(id=${product.id})}">
+                                <i class="fas fa-edit"></i>
+                            </a>
                             <button type="submit" class="btn btn-danger"><i class="far fa-trash-alt"></i></button>
                         </form>
                     </td>
@@ -83,11 +118,47 @@
                 </tbody>
             </table>
         </div>
-        <div th:if="${products.totalPages > 0}" th:each="pageNumber : ${pageNumbers}">
-            <a class="btn btn-primary py-2"
-               th:href="@{/index(page=${pageNumber},title=${param.title},cost_min=${param.cost_min},cost_max=${param.cost_max})}"
-               th:text=${pageNumber}></a>
-        </div>
+        <nav aria-label="..." class="col-12">
+            <ul class="pagination">
+                <li class="page-item" th:classappend="${products.number == 0} ? 'disabled'">
+                    <a class="page-link"
+                       th:href="@{/index(page=${products.number},
+                       title=${param.title},
+                       cost_min=${param.cost_min},
+                       cost_max=${param.cost_max},
+                       ${parameter_sort}=${sort == 'desc'} ?  'desc' : 'asc')}">
+                        Previous
+                    </a>
+                </li>
+                <li class="page-item"
+                    th:each="pageNumber : ${products.totalPages == 0} ? ${#numbers.sequence(1, 1)} : ${#numbers.sequence(1, products.totalPages)}"
+                    th:classappend="${pageNumber == products.number + 1} ? 'active'">
+                    <a class="page-link"
+                       th:href="@{/index(page=${pageNumber},
+                       title=${param.title},
+                       cost_min=${param.cost_min},
+                       cost_max=${param.cost_max},
+                       ${parameter_sort}=${sort == 'desc'} ?  'desc' : 'asc')}"
+                       th:text=${pageNumber}>
+                    </a>
+                </li>
+                <li class="page-item"
+                    th:if="${products.totalPages > 0}"
+                    th:classappend="${products.number + 1 == products.totalPages} ? 'disabled'">
+                    <a class="page-link"
+                       th:href="@{/index(page=${products.number + 2},
+                       title=${param.title},
+                       cost_min=${param.cost_min},
+                       cost_max=${param.cost_max},
+                       ${parameter_sort}=${sort == 'desc'} ?  'desc' : 'asc')}">
+                        Next
+                    </a>
+                </li>
+                <li class="page-item disabled" th:unless="${products.totalPages > 0}">
+                    <a class="page-link">Next</a>
+                </li>
+            </ul>
+        </nav>
     </div>
 </div>
 
