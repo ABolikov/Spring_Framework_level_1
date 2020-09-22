@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Icon-->
+    <script src="https://kit.fontawesome.com/0340798433.js" crossorigin="anonymous"></script>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css"/>
+    <title>EShop application</title>
+</head>
+
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="#">EShop</a>
+
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item active">
+                <a class="nav-link" href="#">List</a>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+<div class="container">
+    <div class="row py-2">
+        <div class="col-12">
+            <a class="btn btn-primary" th:href="@{/add}">Add Product</a>
+        </div>
+
+        <div class="col-12 py-2">
+            <form>
+                <div>
+                    <label>Title</label>
+                    <input type="text" name="title" id="title" th:value="${param.title}"/>
+                </div>
+                <div>
+                    <label>Minimum cost</label>
+                    <input type="text" name="cost_min" id="cost_min" th:value="${param.cost_min}"/>
+                </div>
+                <div>
+                    <label>Maximum cost</label>
+                    <input type="text" name="cost_max" id="cost_max" th:value="${param.cost_max}"/>
+                </div>
+                <button type="submit" class="btn btn-primary">Filter</button>
+                <a class="btn btn-danger" th:href="@{/}">Clear filter</a>
+            </form>
+        </div>
+
+        <div class="col-12">
+            <table class="table table-bordered my-2">
+                <thead>
+                <tr>
+                    <th scope="col">
+                        <a th:href="@{/index(page=${products.number + 1},
+                        title=${param.title},
+                        cost_min=${param.cost_min},
+                        cost_max=${param.cost_max},
+                        sort_id=${sort == 'desc'} ? 'asc' : 'desc')}">
+                            Id
+                            <i class="fas" th:if="${parameter_sort} == 'sort_id'"
+                               th:classappend="${sort == 'desc'} ? 'fa-angle-up' : 'fa-angle-down'"></i>
+                        </a>
+                    </th>
+                    <th scope="col">
+                        <a th:href="@{/index(page=${products.number + 1},
+                        title=${param.title},
+                        cost_min=${param.cost_min},
+                        cost_max=${param.cost_max},
+                        sort_title=${sort == 'desc'} ? 'asc' : 'desc')}">
+                            Title
+                            <i class="fas" th:if="${parameter_sort} == 'sort_title'"
+                               th:classappend="${sort == 'desc'} ? 'fa-angle-up' : 'fa-angle-down'"></i>
+                        </a>
+                    </th>
+                    <th scope="col">
+                        <a th:href="@{/index(page=${products.number + 1},
+                        title=${param.title},
+                        cost_min=${param.cost_min},
+                        cost_max=${param.cost_max},
+                        sort_cost=${sort == 'desc'} ? 'asc' : 'desc')}">
+                            Cost
+                            <i class="fas" th:if="${parameter_sort} == 'sort_cost'"
+                               th:classappend="${sort == 'desc'} ? 'fa-angle-up' : 'fa-angle-down'"></i>
+                        </a>
+                    </th>
+                    <th scope="col">Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="product : ${products.content}">
+                    <td th:text="${product.id}"></td>
+                    <td th:text="${product.title}"></td>
+                    <td th:text="${product.cost}"></td>
+                    <td>
+                        <form th:action="@{product/{id}/delete(id=${product.id})}" th:method="delete">
+                            <a class="btn btn-success"
+                               th:href="@{product/{id}/edit(id=${product.id})}">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <button type="submit" class="btn btn-danger"><i class="far fa-trash-alt"></i></button>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <nav aria-label="..." class="col-12">
+            <ul class="pagination">
+                <li class="page-item" th:classappend="${products.number == 0} ? 'disabled'">
+                    <a class="page-link"
+                       th:href="@{/index(page=${products.number},
+                       title=${param.title},
+                       cost_min=${param.cost_min},
+                       cost_max=${param.cost_max},
+                       ${parameter_sort}=${sort == 'desc'} ?  'desc' : 'asc')}">
+                        Previous
+                    </a>
+                </li>
+                <li class="page-item"
+                    th:each="pageNumber : ${products.totalPages == 0} ? ${#numbers.sequence(1, 1)} : ${#numbers.sequence(1, products.totalPages)}"
+                    th:classappend="${pageNumber == products.number + 1} ? 'active'">
+                    <a class="page-link"
+                       th:href="@{/index(page=${pageNumber},
+                       title=${param.title},
+                       cost_min=${param.cost_min},
+                       cost_max=${param.cost_max},
+                       ${parameter_sort}=${sort == 'desc'} ?  'desc' : 'asc')}"
+                       th:text=${pageNumber}>
+                    </a>
+                </li>
+                <li class="page-item"
+                    th:if="${products.totalPages > 0}"
+                    th:classappend="${products.number + 1 == products.totalPages} ? 'disabled'">
+                    <a class="page-link"
+                       th:href="@{/index(page=${products.number + 2},
+                       title=${param.title},
+                       cost_min=${param.cost_min},
+                       cost_max=${param.cost_max},
+                       ${parameter_sort}=${sort == 'desc'} ?  'desc' : 'asc')}">
+                        Next
+                    </a>
+                </li>
+                <li class="page-item disabled" th:unless="${products.totalPages > 0}">
+                    <a class="page-link">Next</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</div>
+
+<!-- Optional JavaScript -->
+<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+        crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script>
+</body>
+</html>
