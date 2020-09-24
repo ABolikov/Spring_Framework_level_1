@@ -3,10 +3,13 @@ package ru.bolikov.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 import ru.bolikov.entity.Product;
+import ru.bolikov.exception.NotFoundException;
 import ru.bolikov.repositories.ProductRepository;
 import ru.bolikov.specification.ProductSpecification;
 
@@ -88,7 +91,8 @@ public class ProductController {
 
     @GetMapping("/product/{id}/edit")
     public String getProduct(@PathVariable("id") Integer id, Model model) {
-        model.addAttribute("product", productRepository.findById(id).get());
+        Product product = productRepository.findById(id).orElseThrow(new NotFoundException("Product"));
+        model.addAttribute("product", product);
         return "product";
     }
 
