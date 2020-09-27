@@ -6,6 +6,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import ru.bolikov.entity.Product;
@@ -13,6 +14,8 @@ import ru.bolikov.exception.NotFoundException;
 import ru.bolikov.repositories.ProductRepository;
 import ru.bolikov.specification.ProductSpecification;
 
+import javax.validation.Valid;
+import java.math.BigDecimal;
 import java.util.Optional;
 
 @Controller
@@ -84,7 +87,10 @@ public class ProductController {
     }
 
     @PostMapping("/product/add")
-    public String addProduct(Product product) {
+    public String addProduct(@Valid Product product, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return "product";
+        }
         productRepository.save(product);
         return "redirect:/index";
     }

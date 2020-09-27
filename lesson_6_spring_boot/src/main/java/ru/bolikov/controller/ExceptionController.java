@@ -10,7 +10,7 @@ import ru.bolikov.exception.NotFoundException;
 @ControllerAdvice
 public class ExceptionController {
 
-    @ExceptionHandler
+    @ExceptionHandler(NotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ModelAndView notFoundExceptionHandler(NotFoundException notFoundException) {
         ModelAndView modelAndView = new ModelAndView("error");

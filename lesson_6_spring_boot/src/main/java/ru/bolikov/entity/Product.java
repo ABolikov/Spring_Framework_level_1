@@ -1,6 +1,11 @@
 package ru.bolikov.entity;
 
+import ru.bolikov.validation.NotBlankBigDecimal;
+
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
+import java.math.BigDecimal;
 
 @Entity
 @Table(name = "product")
@@ -10,16 +15,18 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @NotBlank
     @Column(name = "title")
     private String title;
 
+    @NotBlankBigDecimal
     @Column(name = "cost")
-    private Integer cost;
+    private BigDecimal cost;
 
     public Product() {
     }
 
-    public Product(Integer id, String title, Integer cost) {
+    public Product(Integer id, String title, BigDecimal cost) {
         this.id = id;
         this.title = title;
         this.cost = cost;
@@ -33,7 +40,7 @@ public class Product {
         return title;
     }
 
-    public Integer getCost() {
+    public BigDecimal getCost() {
         return cost;
     }
 
@@ -45,7 +52,7 @@ public class Product {
         this.title = title;
     }
 
-    public void setCost(Integer cost) {
+    public void setCost(BigDecimal cost) {
         this.cost = cost;
     }
 
