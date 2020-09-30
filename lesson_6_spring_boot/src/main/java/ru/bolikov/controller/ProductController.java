@@ -97,7 +97,7 @@ public class ProductController {
 
     @GetMapping("/product/{id}/edit")
     public String getProduct(@PathVariable("id") Integer id, Model model) {
-        Product product = productRepository.findById(id).orElseThrow(new NotFoundException("Product"));
+        Product product = productRepository.findById(id).orElseThrow(new NotFoundException(null, "Product"));
         model.addAttribute("product", product);
         return "product";
     }

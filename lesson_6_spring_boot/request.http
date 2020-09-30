@@ -1,0 +1,44 @@
+GET http://localhost:8080/site/api/v1/product/all
+
+###
+
+GET http://localhost:8080/site/api/v1/product/5/id
+
+###
+#Выдаст ошибку
+GET http://localhost:8080/site/api/v1/product/100000/id
+
+###
+#Выдаст ошибку
+POST http://localhost:8080/site/api/v1/product
+Content-type: application/json
+
+{
+  "id": 5,
+  "title": "Монитер LG",
+  "cost": 21000.00
+}
+
+###
+POST http://localhost:8080/site/api/v1/product
+Content-type: application/json
+
+{
+  "title": "Мышь для удаления",
+  "cost": 999.99
+}
+
+###
+
+PUT http://localhost:8080/site/api/v1/product
+Content-type: application/json
+
+{
+  "id": 5,
+  "title": "Монитер LG2",
+  "cost": 21000.00
+}
+
+###
+
+DELETE http://localhost:8080/site/api/v1/product/20/id
