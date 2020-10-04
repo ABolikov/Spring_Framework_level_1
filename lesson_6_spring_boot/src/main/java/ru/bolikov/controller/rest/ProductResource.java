@@ -26,6 +26,9 @@ public class ProductResource {
     @Autowired
     private ProductRepository productRepository;
 
+    @Autowired
+    private ProductErrorResponse productErrorResponse;
+
     @GetMapping(path = "/all", produces = "application/json")
     public List<Product> allProducts() {
         return productRepository.findAll();
@@ -58,20 +61,18 @@ public class ProductResource {
 
     @ExceptionHandler
     public ResponseEntity<ProductErrorResponse> notFoundExceptionHandler(NotFoundException exc) {
-        ProductErrorResponse studentsErrorResponse = new ProductErrorResponse();
-        studentsErrorResponse.setStatus(HttpStatus.NOT_FOUND.value());
-        studentsErrorResponse.setMessage(exc.getMessage());
-        studentsErrorResponse.setTimestamp(System.currentTimeMillis());
-        return new ResponseEntity<>(studentsErrorResponse, HttpStatus.NOT_FOUND);
+        productErrorResponse.setStatus(HttpStatus.NOT_FOUND.value());
+        productErrorResponse.setMessage(exc.getMessage());
+        productErrorResponse.setTimestamp(System.currentTimeMillis());
+        return new ResponseEntity<>(productErrorResponse, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler
     public ResponseEntity<ProductErrorResponse> illegalArgumentExceptionHandler(IllegalArgumentException exc) {
-        ProductErrorResponse studentsErrorResponse = new ProductErrorResponse();
-        studentsErrorResponse.setStatus(HttpStatus.BAD_REQUEST.value());
-        studentsErrorResponse.setMessage(exc.getLocalizedMessage());
-        studentsErrorResponse.setTimestamp(System.currentTimeMillis());
-        return new ResponseEntity<>(studentsErrorResponse, HttpStatus.BAD_REQUEST);
+        productErrorResponse.setStatus(HttpStatus.BAD_REQUEST.value());
+        productErrorResponse.setMessage(exc.getMessage());
+        productErrorResponse.setTimestamp(System.currentTimeMillis());
+        return new ResponseEntity<>(productErrorResponse, HttpStatus.BAD_REQUEST);
     }
 
 

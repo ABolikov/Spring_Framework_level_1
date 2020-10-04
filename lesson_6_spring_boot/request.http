@@ -41,4 +41,4 @@ Content-type: application/json
 
 ###
 
-DELETE http://localhost:8080/site/api/v1/product/20/id
+DELETE http://localhost:8080/site/api/v1/product/21/id
