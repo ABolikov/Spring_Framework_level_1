@@ -33,21 +33,38 @@
                 <a class="nav-link" th:href="@{/}">List</a>
             </li>
         </ul>
-
-        <form sec:authorize="isAuthenticated()" class="form-inline my-2 my-lg-0" th:action="@{/logout}" method="post">
-            <button class="btn btn-outline-success my-2 my-sm-0">
-                Logout <span sec:authentication="principal.username"></span>
-            </button>
-        </form>
     </div>
+
+    <form sec:authorize="isAuthenticated()" class="form-inline my-2 my-lg-0" th:action="@{/logout}" method="post">
+        <button class="btn btn-outline-success my-2 my-sm-0">
+            Logout <span sec:authentication="principal.username"></span>
+        </button>
+    </form>
 </nav>
 
-<div id="wrapper" class="container-fluid">
-    <div class="error-box">
-        <div class="error-body text-center">
-            <h1 class="text-danger" th:text="${httpStatus}"></h1>
-            <h3 th:text="${entity}"></h3>
-            <a th:href="@{/}" class="btn btn-danger btn-rounded m-b-40">Back to home</a></div>
+<div class="container">
+    <div class="row py-2">
+        <div class="col-12" sec:authorize="not isAuthenticated()">
+            <div>
+                <h3>Please sign in</h3>
+            </div>
+            <form th:action="@{/authentificateTheUser}" method="post">
+                <div class="form-group">
+                    <label>Login</label>
+                    <input type="text" class="form-control" name="login" id="login" th:value="${param.login}" placeholder="Enter login" >
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" class="form-control" name="password" id="password" placeholder="Enter password" th:value="${param.password}">
+                </div>
+                <a class="btn btn-primary" th:href="@{/}">Back</a>
+                <button type="submit" class="btn btn-primary">Sign in</button>
+            </form>
+        </div>
+        <div sec:authorize="isAuthenticated()">
+            <h3>You are already logged in</h3>
+            <a class="btn btn-primary" th:href="@{/}">Back</a>
+        </div>
     </div>
 </div>
 
@@ -62,5 +79,5 @@
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
         integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
         crossorigin="anonymous"></script>
+
 </body>
-</html>

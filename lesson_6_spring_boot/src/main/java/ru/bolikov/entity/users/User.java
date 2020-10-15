@@ -1,7 +1,11 @@
 package ru.bolikov.entity.users;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
 import javax.persistence.*;
-import java.util.Arrays;
+import javax.validation.constraints.NotBlank;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -13,22 +17,24 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @NotBlank
     @Column(name = "login")
     private String login;
 
+    @NotBlank
     @Column(name = "password")
-    private char[] password;
+    private String password;
 
     @OneToMany(mappedBy = "user",
             cascade = CascadeType.ALL,
-            fetch=FetchType.EAGER
+            fetch = FetchType.EAGER
     )
     public List<UserRole> userRole;
 
     public User() {
     }
 
-    public User(Integer id, String login, char[] password) {
+    public User(Integer id, String login, String password) {
         this.id = id;
         this.login = login;
         this.password = password;
@@ -50,16 +56,20 @@ public class User {
         this.login = login;
     }
 
-    public char[] getPassword() {
+    public String getPassword() {
         return password;
     }
 
-    public void setPassword(char[] password) {
+    public void setPassword(String password) {
         this.password = password;
     }
 
-    public List<UserRole> getUserRole() {
-        return userRole;
+    public List<Role> getUserRole() {
+        List<Role> roles = new ArrayList<>();
+        for (UserRole role: userRole) {
+            roles.add(role.getRole());
+        }
+        return roles;
     }
 
     public void setUserRole(List<UserRole> userRole) {
@@ -75,14 +85,15 @@ public class User {
 
         if (!Objects.equals(id, user.id)) return false;
         if (!Objects.equals(login, user.login)) return false;
-        return Arrays.equals(password, user.password);
+        return password.equals(user.password);
     }
 
     @Override
     public int hashCode() {
         int result = id != null ? id.hashCode() : 0;
         result = 31 * result + (login != null ? login.hashCode() : 0);
-        result = 31 * result + Arrays.hashCode(password);
+        result = 31 * result + (password != null ? password.hashCode() : 0);
         return result;
     }
+
 }

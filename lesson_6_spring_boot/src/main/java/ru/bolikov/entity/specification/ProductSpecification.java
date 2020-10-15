@@ -1,4 +1,4 @@
-package ru.bolikov.specification;
+package ru.bolikov.entity.specification;
 
 import org.springframework.data.jpa.domain.Specification;
 import ru.bolikov.entity.Product;

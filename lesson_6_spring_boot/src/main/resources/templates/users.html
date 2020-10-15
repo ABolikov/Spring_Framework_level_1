@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css"/>
+
+    <!-- My CSS -->
+    <link rel="stylesheet" type="text/css" href="../../style_page_error.css">
+    <title>EShop application</title>
+</head>
+
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" th:href="@{/}">EShop</a>
+
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item active">
+                <a class="nav-link" th:href="@{/}">List</a>
+            </li>
+        </ul>
+
+        <form sec:authorize="isAuthenticated()" class="form-inline my-2 my-lg-0" th:action="@{/logout}" method="post">
+            <button class="btn btn-outline-success my-2 my-sm-0">
+                Logout <span sec:authentication="principal.username"></span>
+            </button>
+        </form>
+    </div>
+</nav>
+
+<div class="container">
+    <div class="row py-2">
+        <div class="col-12">
+            <a class="btn btn-primary" th:href="@{/admin}">Back</a>
+            <a class="btn btn-primary" th:href="@{/admin/user/new}">Add User</a>
+        </div>
+
+        <div class="col-12 mt-3">
+            <form>
+                <label>Login</label>
+                <input type="text" name="login" id="login" th:value="${param.login}"/>
+
+                <!--                <label>Password</label>-->
+                <!--                <input type="text" name="password" id="password" th:value="${param.password}"/>-->
+
+                <label>Role</label>
+                <input type="text" name="userRole" id="userRole" th:value="${param.userRole}"/>
+
+                <button class="btn btn-primary" type="submit">Filter</button>
+                <a class="btn btn-danger" th:href="@{/admin/user/}">Clear filter</a>
+            </form>
+        </div>
+
+        <div class="col-12">
+            <table class="table table-bordered my-2">
+                <thead>
+                <tr>
+                    <th scope="col">Id</th>
+                    <th scope="col">Login</th>
+                    <th scope="col">Roles</th>
+                    <th scope="col">Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="user : ${usersPage.content}">
+                    <th scope="row" th:text="${user.id}">1</th>
+                    <td th:text="${user.login}">User login</td>
+                    <td th:text="${user.userRole}">User roles</td>
+                    <td>
+                        <form class="d-inline" th:action="@{/admin/user/{id}/delete(id = ${user.id})}"
+                              th:method="delete">
+                            <a class="btn btn-success" th:href="@{/admin/user/{id}(id = ${user.id})}"><i
+                                    class="fas fa-edit"></i></a>
+                            <button type="submit" class="btn btn-danger"><i class="far fa-trash-alt"></i></button>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <nav aria-label="..." class="col-12">
+            <ul class="pagination">
+                <li class="page-item" th:classappend="${usersPage.number == 0} ? 'disabled'">
+                    <a class="page-link"
+                       th:href="@{/admin/user/(page=${usersPage.number},
+                       login=${param.login},
+                       userRole=${param.userRole})}">
+                        Previous
+                    </a>
+                </li>
+                <li class="page-item"
+                    th:each="pageNumber : ${usersPage.totalPages == 0} ? ${#numbers.sequence(1, 1)} : ${#numbers.sequence(1, usersPage.totalPages)}"
+                    th:classappend="${pageNumber == usersPage.number + 1} ? 'active'">
+                    <a class="page-link"
+                       th:href="@{/admin/user/(page=${pageNumber},
+                       login=${param.login},
+                       userRole=${param.userRole})}"
+                       th:text=${pageNumber}>
+                    </a>
+                </li>
+                <li class="page-item"
+                    th:if="${usersPage.totalPages > 0}"
+                    th:classappend="${usersPage.number + 1 == usersPage.totalPages} ? 'disabled'">
+                    <a class="page-link"
+                       th:href="@{/admin/user/(page=${usersPage.number + 2},
+                       login=${param.login},
+                       userRole=${param.userRole})}">
+                        Next
+                    </a>
+                </li>
+                <li class="page-item disabled" th:unless="${usersPage.totalPages > 0}">
+                    <a class="page-link">Next</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</div>
+
+<!-- Optional JavaScript -->
+<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+        crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script>
+</body>
+</html>

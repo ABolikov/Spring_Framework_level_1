@@ -1,23 +1,27 @@
 package ru.bolikov.entity.users;
 
+import org.springframework.security.core.GrantedAuthority;
+
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import java.util.List;
 import java.util.Objects;
 
 @Entity
 @Table(name = "role")
-public class Role {
+public class Role implements GrantedAuthority {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @NotBlank
     @Column(name = "role_name")
     private String roleName;
 
     @OneToMany(mappedBy = "role",
             cascade = CascadeType.ALL,
-            fetch=FetchType.EAGER
+            fetch = FetchType.EAGER
     )
     public List<UserRole> userRole;
 
@@ -69,5 +73,15 @@ public class Role {
         int result = id != null ? id.hashCode() : 0;
         result = 31 * result + (roleName != null ? roleName.hashCode() : 0);
         return result;
+    }
+
+    @Override
+    public String getAuthority() {
+        return "ROLE_"+roleName;
+    }
+
+    @Override
+    public String toString() {
+        return roleName;
     }
 }
