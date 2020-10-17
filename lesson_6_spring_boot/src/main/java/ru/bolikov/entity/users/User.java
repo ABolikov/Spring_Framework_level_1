@@ -32,16 +32,6 @@ public class User {
     )
     public List<Role> roles;
 
-    private int role;
-
-    public int getRole() {
-        return role;
-    }
-
-    public void setRole(int role) {
-        this.role = role;
-    }
-
     public User() {
     }
 

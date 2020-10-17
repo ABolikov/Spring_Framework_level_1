@@ -7,7 +7,20 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="lesson_1_network_chat" />
+        <module name="lesson_2_spring_mvc" />
+        <module name="lesson_6_spring_boot" />
+        <module name="lesson_4_spring_data" />
+        <module name="lesson_3_hibernate" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="lesson_4_spring_data_jpa" target="1.8" />
+      <module name="teee" target="1.8" />
+    </bytecodeTargetLevel>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="lesson_6_spring_boot" options="-parameters" />
+    </option>
   </component>
 </project>
