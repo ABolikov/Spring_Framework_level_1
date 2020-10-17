@@ -58,8 +58,8 @@
                     <input type="password" class="form-control" th:field="*{password}" placeholder="Enter password">
                 </div>
                 <div class="checkbox" th:each="role : ${allRoles}">
-                    <label> <input th:value="${role.id}" type="checkbox"/>
-                        <span th:text="${role.roleName}" th:remove="tag"> </span>
+                        <label> <input th:value="${role.id}" name="roles" th:field="*{roles}" type="checkbox"/>
+                        <span th:text="${role.roleName}"> </span>
                     </label>
                 </div>
                 <a class="btn btn-primary" th:href="@{/admin/user}">Back</a>

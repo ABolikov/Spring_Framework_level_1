@@ -1,11 +1,7 @@
 package ru.bolikov.entity.users;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
-
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -25,11 +21,26 @@ public class User {
     @Column(name = "password")
     private String password;
 
-    @OneToMany(mappedBy = "user",
+    @ManyToMany(
             cascade = CascadeType.ALL,
             fetch = FetchType.EAGER
     )
-    public List<UserRole> userRole;
+    @JoinTable(
+            name = "user_role",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id")
+    )
+    public List<Role> roles;
+
+    private int role;
+
+    public int getRole() {
+        return role;
+    }
+
+    public void setRole(int role) {
+        this.role = role;
+    }
 
     public User() {
     }
@@ -38,6 +49,11 @@ public class User {
         this.id = id;
         this.login = login;
         this.password = password;
+    }
+
+    public User(Integer id, String login, String password, List<Role> roles) {
+        this(id, login, password);
+        this.roles = roles;
     }
 
     public Integer getId() {
@@ -64,16 +80,12 @@ public class User {
         this.password = password;
     }
 
-    public List<Role> getUserRole() {
-        List<Role> roles = new ArrayList<>();
-        for (UserRole role: userRole) {
-            roles.add(role.getRole());
-        }
+    public List<Role> getRoles() {
         return roles;
     }
 
-    public void setUserRole(List<UserRole> userRole) {
-        this.userRole = userRole;
+    public void setRoles(List<Role> roles) {
+        this.roles = roles;
     }
 
     @Override

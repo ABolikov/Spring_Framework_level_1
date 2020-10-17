@@ -37,7 +37,7 @@
             </li>
         </ul>
 
-        <div sec:authorize="hasAnyAuthority('ROLE_ADMIN','ROLE_ROOT','ROLE_MANAGER')">
+        <div sec:authorize="hasAnyAuthority('ROLE_ADMIN','ROLE_ROOT')">
             <a class="btn btn-primary my-2 my-sm-0" th:href="@{/admin}">Administration</a>
         </div>
         <form sec:authorize="isAuthenticated()" class="form-inline my-2 my-lg-0" th:action="@{/logout}" method="post">
@@ -53,7 +53,7 @@
 
 <div class="container">
     <div class="row py-2">
-        <div class="col-12">
+        <div class="col-12" sec:authorize="hasAnyAuthority('ROLE_ADMIN','ROLE_ROOT','ROLE_MANAGER')">
             <a class="btn btn-primary" th:href="@{/add}">Add Product</a>
         </div>
 
@@ -113,7 +113,7 @@
                                th:classappend="${sort == 'desc'} ? 'fa-angle-up' : 'fa-angle-down'"></i>
                         </a>
                     </th>
-                    <th scope="col">Actions</th>
+                    <th scope="col" sec:authorize="hasAnyAuthority('ROLE_ADMIN','ROLE_ROOT','ROLE_MANAGER')">Actions</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -121,7 +121,7 @@
                     <td th:text="${product.id}"></td>
                     <td th:text="${product.title}"></td>
                     <td th:text="${product.cost}"></td>
-                    <td>
+                    <td sec:authorize="hasAnyAuthority('ROLE_ADMIN','ROLE_ROOT','ROLE_MANAGER')">
                         <form th:action="@{product/{id}/delete(id=${product.id})}" th:method="delete">
                             <a class="btn btn-success"
                                th:href="@{product/{id}/edit(id=${product.id})}">

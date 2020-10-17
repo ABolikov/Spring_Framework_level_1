@@ -10,7 +10,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
 import ru.bolikov.entity.users.Role;
 import ru.bolikov.entity.users.User;
 import ru.bolikov.exception.NotFoundException;
@@ -62,6 +61,8 @@ public class UserController {
         User user = userRepository.findById(id).orElseThrow(new NotFoundException(null, "User"));
         user.setPassword("");
         model.addAttribute("user", user);
+        List<Role> roles = roleRepository.findAll();
+        model.addAttribute("allRoles", roles);
         return "user";
     }
 
@@ -69,21 +70,10 @@ public class UserController {
     public String newUser(Model model) {
         User user = new User();
         model.addAttribute("user", user);
-        List<Role> test = roleRepository.findAll();
-        model.addAttribute("allRoles", test);
+        List<Role> roles = roleRepository.findAll();
+        model.addAttribute("allRoles", roles);
         return "user";
     }
-
-//    @GetMapping("/admin/user/new")
-//    public ModelAndView newUser() {
-//        ModelAndView modelAndView = new ModelAndView();
-//        modelAndView.setViewName("user");
-//        User user = new User();
-//        modelAndView.addObject("user", user);
-//        List<Role> roles = roleRepository.findAll();
-//        modelAndView.addObject("allRoles", roles);
-//        return modelAndView;
-//    }
 
     @PostMapping("/admin/user/update")
     public String updateUser(@Valid User user, BindingResult bindingResult) {

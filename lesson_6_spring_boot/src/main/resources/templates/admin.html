@@ -62,8 +62,13 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>
+                    <td sec:authorize="hasAnyAuthority('ROLE_ROOT')">
                         <a class="" th:href="@{/admin/role}"><i class="fas fa-edit">All roles</i></a>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <a class="" th:href="@{/}"><i class="fas fa-edit">All products</i></a>
                     </td>
                 </tr>
                 </tbody>

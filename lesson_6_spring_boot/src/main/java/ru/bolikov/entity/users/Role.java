@@ -19,11 +19,16 @@ public class Role implements GrantedAuthority {
     @Column(name = "role_name")
     private String roleName;
 
-    @OneToMany(mappedBy = "role",
+    @OneToMany(
             cascade = CascadeType.ALL,
             fetch = FetchType.EAGER
     )
-    public List<UserRole> userRole;
+    @JoinTable(
+            name = "user_role",
+            joinColumns = @JoinColumn(name = "role_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id")
+    )
+    public List<User> users;
 
     public Role() {
     }
@@ -49,12 +54,21 @@ public class Role implements GrantedAuthority {
         this.roleName = roleName;
     }
 
-    public List<UserRole> getUserRole() {
-        return userRole;
+    public List<User> getUsers() {
+        return users;
     }
 
-    public void setUserRole(List<UserRole> userRole) {
-        this.userRole = userRole;
+    public void setUsers(List<User> users) {
+        this.users = users;
+    }
+
+    public Role getRole() {
+        return this;
+    }
+
+    @PreRemove
+    public void preRemove() {
+        users.forEach(user -> user.getRoles().remove(this));
     }
 
     @Override

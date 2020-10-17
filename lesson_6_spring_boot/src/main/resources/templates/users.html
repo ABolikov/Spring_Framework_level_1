@@ -46,7 +46,7 @@
     <div class="row py-2">
         <div class="col-12">
             <a class="btn btn-primary" th:href="@{/admin}">Back</a>
-            <a class="btn btn-primary" th:href="@{/admin/user/new}">Add User</a>
+            <a sec:authorize="hasAnyAuthority('ROLE_ROOT')" class="btn btn-primary" th:href="@{/admin/user/new}">Add User</a>
         </div>
 
         <div class="col-12 mt-3">
@@ -54,11 +54,8 @@
                 <label>Login</label>
                 <input type="text" name="login" id="login" th:value="${param.login}"/>
 
-                <!--                <label>Password</label>-->
-                <!--                <input type="text" name="password" id="password" th:value="${param.password}"/>-->
-
                 <label>Role</label>
-                <input type="text" name="userRole" id="userRole" th:value="${param.userRole}"/>
+                <input type="text" name="userRole" id="userRole" th:value="${param.roles}"/>
 
                 <button class="btn btn-primary" type="submit">Filter</button>
                 <a class="btn btn-danger" th:href="@{/admin/user/}">Clear filter</a>
@@ -72,15 +69,15 @@
                     <th scope="col">Id</th>
                     <th scope="col">Login</th>
                     <th scope="col">Roles</th>
-                    <th scope="col">Actions</th>
+                    <th scope="col" sec:authorize="hasAnyAuthority('ROLE_ROOT')">Actions</th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr th:each="user : ${usersPage.content}">
                     <th scope="row" th:text="${user.id}">1</th>
                     <td th:text="${user.login}">User login</td>
-                    <td th:text="${user.userRole}">User roles</td>
-                    <td>
+                    <td th:text="${user.roles}">User roles</td>
+                    <td sec:authorize="hasAnyAuthority('ROLE_ROOT')">
                         <form class="d-inline" th:action="@{/admin/user/{id}/delete(id = ${user.id})}"
                               th:method="delete">
                             <a class="btn btn-success" th:href="@{/admin/user/{id}(id = ${user.id})}"><i
