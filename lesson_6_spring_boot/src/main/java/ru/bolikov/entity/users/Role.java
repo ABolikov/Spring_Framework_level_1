@@ -19,14 +19,10 @@ public class Role implements GrantedAuthority {
     @Column(name = "role_name")
     private String roleName;
 
-    @OneToMany(
+    @ManyToMany(
+            mappedBy = "roles",
             cascade = CascadeType.ALL,
             fetch = FetchType.EAGER
-    )
-    @JoinTable(
-            name = "user_role",
-            joinColumns = @JoinColumn(name = "role_id"),
-            inverseJoinColumns = @JoinColumn(name = "user_id")
     )
     public List<User> users;
 

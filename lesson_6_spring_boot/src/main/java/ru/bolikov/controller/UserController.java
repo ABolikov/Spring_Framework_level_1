@@ -76,8 +76,10 @@ public class UserController {
     }
 
     @PostMapping("/admin/user/update")
-    public String updateUser(@Valid User user, BindingResult bindingResult) {
+    public String updateUser(@Valid User user, BindingResult bindingResult, Model model) {
         if (bindingResult.hasErrors()) {
+            List<Role> roles = roleRepository.findAll();
+            model.addAttribute("allRoles", roles);
             return "user";
         }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
