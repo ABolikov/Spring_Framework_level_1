@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css"/>
+
+    <!-- My CSS -->
+    <link rel="stylesheet" type="text/css" href="../../style_page_error.css">
+    <title>EShop application</title>
+</head>
+
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" th:href="@{/}">EShop</a>
+
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item active">
+                <a class="nav-link" th:href="@{/}">List</a>
+            </li>
+        </ul>
+
+        <form sec:authorize="isAuthenticated()" class="form-inline my-2 my-lg-0" th:action="@{/logout}" method="post">
+            <button class="btn btn-outline-success my-2 my-sm-0">
+                Logout <span sec:authentication="principal.username"></span>
+            </button>
+        </form>
+    </div>
+</nav>
+
+<div class="container">
+    <div class="row py-2">
+        <div class="col-12">
+            <a class="btn btn-primary" th:href="@{/admin}">Back</a>
+            <a class="btn btn-primary" th:href="@{/admin/role/new}">Add Role</a>
+        </div>
+
+        <div class="col-12 mt-3">
+            <form>
+                <div>
+                    <label>Role name</label>
+                    <input type="text" name="roleName" id="roleName" th:value="${param.roleName}"/>
+                </div>
+                <button class="btn btn-primary" type="submit">Filter</button>
+                <a class="btn btn-danger" th:href="@{/admin/role/}">Clear filter</a>
+            </form>
+        </div>
+
+        <div class="col-12">
+            <table class="table table-bordered my-2">
+                <thead>
+                <tr>
+                    <th scope="col">Id</th>
+                    <th scope="col">Role name</th>
+                    <th scope="col">Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="role : ${rolePage.content}">
+                    <th scope="row" th:text="${role.id}">1</th>
+                    <td th:text="${role.roleName}">Role name</td>
+                    <td>
+                        <form class="d-inline" th:action="@{/admin/role/{id}/delete(id = ${role.id})}"
+                              th:method="delete">
+                            <a class="btn btn-success" th:href="@{/admin/role/{id}(id = ${role.id})}"><i
+                                    class="fas fa-edit"></i></a>
+                            <button type="submit" class="btn btn-danger"><i class="far fa-trash-alt"></i></button>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <nav aria-label="..." class="col-12">
+            <ul class="pagination">
+                <li class="page-item" th:classappend="${rolePage.number == 0} ? 'disabled'">
+                    <a class="page-link"
+                       th:href="@{/admin/role/(page=${rolePage.number},
+                         roleName=${param.roleName})}">
+                        Previous
+                    </a>
+                </li>
+                <li class="page-item"
+                    th:each="pageNumber : ${rolePage.totalPages == 0} ? ${#numbers.sequence(1, 1)} : ${#numbers.sequence(1, rolePage.totalPages)}"
+                    th:classappend="${pageNumber == rolePage.number + 1} ? 'active'">
+                    <a class="page-link"
+                       th:href="@{/admin/role/(page=${pageNumber},
+                       roleName=${param.roleName})}"
+                       th:text=${pageNumber}>
+                    </a>
+                </li>
+                <li class="page-item"
+                    th:if="${rolePage.totalPages > 0}"
+                    th:classappend="${rolePage.number + 1 == rolePage.totalPages} ? 'disabled'">
+                    <a class="page-link"
+                       th:href="@{/admin/role/(page=${rolePage.number + 2},
+                        roleName=${param.roleName})}">
+                        Next
+                    </a>
+                </li>
+                <li class="page-item disabled" th:unless="${rolePage.totalPages > 0}">
+                    <a class="page-link">Next</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</div>
+
+<!-- Optional JavaScript -->
+<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+        crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script>
+</body>
+</html>

@@ -7,6 +7,9 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
+    <!-- Icon-->
+    <script src="https://kit.fontawesome.com/0340798433.js" crossorigin="anonymous"></script>
+
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
           integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
@@ -42,12 +45,35 @@
     </div>
 </nav>
 
-<div id="wrapper" class="container-fluid">
-    <div class="error-box">
-        <div class="error-body text-center">
-            <h1 class="text-danger" th:text="${httpStatus}"></h1>
-            <h3 th:text="${entity}"></h3>
-            <a th:href="@{/}" class="btn btn-danger btn-rounded m-b-40">Back to home</a></div>
+<div class="container">
+    <div class="row py-2">
+
+        <div class="col-12">
+            <table class="table table-bordered my-2">
+                <thead>
+                <tr>
+                    <th scope="col">Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>
+                        <a class="" th:href="@{/admin/user}"><i class="fas fa-edit">All users</i></a>
+                    </td>
+                </tr>
+                <tr>
+                    <td sec:authorize="hasAnyAuthority('ROLE_ROOT')">
+                        <a class="" th:href="@{/admin/role}"><i class="fas fa-edit">All roles</i></a>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <a class="" th:href="@{/}"><i class="fas fa-edit">All products</i></a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 

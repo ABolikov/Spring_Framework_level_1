@@ -1,5 +1,6 @@
 <!doctype html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <head>
     <!-- Required meta tags -->
@@ -13,13 +14,16 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
           integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css"/>
+
+    <!-- My CSS -->
+    <link rel="stylesheet" type="text/css" href="../../style_page_error.css">
     <title>EShop application</title>
 </head>
 
 <body>
 
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <a class="navbar-brand" href="#">EShop</a>
+    <a class="navbar-brand" th:href="@{/}">EShop</a>
 
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
             aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -29,15 +33,27 @@
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto">
             <li class="nav-item active">
-                <a class="nav-link" href="#">List</a>
+                <a class="nav-link" th:href="@{/}">List</a>
             </li>
         </ul>
+
+        <div sec:authorize="hasAnyAuthority('ROLE_ADMIN','ROLE_ROOT')">
+            <a class="btn btn-primary my-2 my-sm-0" th:href="@{/admin}">Administration</a>
+        </div>
+        <form sec:authorize="isAuthenticated()" class="form-inline my-2 my-lg-0" th:action="@{/logout}" method="post">
+            <button class="btn btn-outline-success my-2 my-sm-0">
+                Logout <span sec:authentication="principal.username"></span>
+            </button>
+        </form>
+        <div sec:authorize="not isAuthenticated()">
+            <a class="btn btn-outline-success my-2 my-sm-0" th:href="@{/login}">Login</a>
+        </div>
     </div>
 </nav>
 
 <div class="container">
     <div class="row py-2">
-        <div class="col-12">
+        <div class="col-12" sec:authorize="hasAnyAuthority('ROLE_ADMIN','ROLE_ROOT','ROLE_MANAGER')">
             <a class="btn btn-primary" th:href="@{/add}">Add Product</a>
         </div>
 
@@ -97,7 +113,7 @@
                                th:classappend="${sort == 'desc'} ? 'fa-angle-up' : 'fa-angle-down'"></i>
                         </a>
                     </th>
-                    <th scope="col">Actions</th>
+                    <th scope="col" sec:authorize="hasAnyAuthority('ROLE_ADMIN','ROLE_ROOT','ROLE_MANAGER')">Actions</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -105,7 +121,7 @@
                     <td th:text="${product.id}"></td>
                     <td th:text="${product.title}"></td>
                     <td th:text="${product.cost}"></td>
-                    <td>
+                    <td sec:authorize="hasAnyAuthority('ROLE_ADMIN','ROLE_ROOT','ROLE_MANAGER')">
                         <form th:action="@{product/{id}/delete(id=${product.id})}" th:method="delete">
                             <a class="btn btn-success"
                                th:href="@{product/{id}/edit(id=${product.id})}">
